@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:HGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 width="100%" horizontalAlign="center">
+	
+	<fx:Script>
+
+		<![CDATA[
+			import nmmap.events.MapEvent;
+			
+			//script here			
+			protected function latLngButton_clickHandler(event:MouseEvent):void
+			{
+				dispatchEvent(new MapEvent(MapEvent.PLOT_LATLNG));		
+				
+			}
+			
+			protected function addressButton_clickHandler(event:MouseEvent):void
+			{
+				dispatchEvent(new MapEvent(MapEvent.PLOT_GEOCODE));
+				addressButton.enabled = false;
+			}
+			
+			protected function serviceButton_clickHandler(event:MouseEvent):void
+			{
+				dispatchEvent(new MapEvent(MapEvent.GET_SERVICE));
+				//serviceButton.enabled = false;				
+			}
+			
+		]]>
+	
+	</fx:Script>
+	
+	
+	<s:Button id="latLngButton" 
+			  label="LatLng"
+			  click="latLngButton_clickHandler(event)"/>
+	<s:Button id="addressButton" 
+			  label="Address"
+			  click="addressButton_clickHandler(event)"/>
+	<s:Button id="serviceButton" 
+			  label="Get Service"
+			  click="serviceButton_clickHandler(event)"/>
+	<s:Button label="Button"/>
+	<s:Button label="Button"/>
+
+	
+</s:HGroup>

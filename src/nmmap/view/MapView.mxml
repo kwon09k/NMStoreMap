@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:mq="com.mapquest.tilemap.*"
+		 xmlns:flex="com.mapquest.tilemap.controls.flex.*"
+		 width="100%" height="100%"
+		 creationComplete="_creationCompleteHandler(event)">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.mapquest.*;
+			import com.mapquest.services.geocode.*;
+			import com.mapquest.tilemap.ShapeCollection;
+			import com.mapquest.tilemap.TileMapEvent;
+			import com.mapquest.tilemap.controls.inputdevice.*;
+			import com.mapquest.tilemap.controls.shadymeadow.*;
+			import com.mapquest.tilemap.pois.*;
+			
+			import mx.core.InteractionMode;
+			import mx.events.FlexEvent;
+			
+			import spark.components.*;
+
+			
+			[Embed ("nmmap/images/red-pin.png")]
+			private var red:Class;			
+			[Embed ("nmmap/images/yellow-pin.png")]
+			private var yellow:Class;
+			[Embed ("nmmap/images/green-pin.png")]
+			private var green:Class;
+			
+			public var poiIndex:int = 0;			
+			
+/*  			[Bindable]
+			private var latLng:Array = []; */
+ 			[Bindable]
+			private var _poi:Poi;
+			[Bindable]
+			private var _masterPoi:Poi = new Poi(new LatLng(33,-96.8), new StarMapIcon(35, 0x123456));
+			[Bindable]
+			private var _childPoiColl:ShapeCollection = new ShapeCollection;
+			[Bindable]
+			private var _masterPoiColl:ShapeCollection = new ShapeCollection;
+			
+			//create a ClusterDeclutter object
+			private var _deClutter:IDeclutter;
+			
+			//create a leaderlines object
+			private var _leaderLine:LeaderLines = new LeaderLines();
+			
+			
+			private function _creationCompleteHandler(event:FlexEvent):void
+			{
+				//add controls to the map
+				myMap.addControl(new SMLargeZoomControl());
+				myMap.addControl(new SMViewControl);
+				myMap.addControl(new MouseWheelZoomControl());
+				myMap.addControl(new KeyboardControl());
+				
+				myMap.tileMap.cursorManager.enabled = true;
+				
+				//setting center based on master poi				
+				myMap.setCenter(_masterPoi.latLng);
+				
+				
+				//add a leader line object so we can change the properties of the leader lines
+				myMap.leaderLines = _leaderLine;
+				_leaderLine.lineColor = 0x0066FF;
+				
+				
+//				_deClutter = new CircleDeclutter(); //new ForceDeclutter();
+				//turn on declutter mode
+//				myMap.declutter = _deClutter;
+				
+				
+				//initialize master poi
+				_masterPoi = new Poi(new LatLng(33,-96.8));
+				_masterPoi.rolloverAndInfoTitleText = "master";
+				_masterPoiColl.add(_masterPoi);
+				myMap.addShapeCollection(_masterPoiColl);
+				
+				
+				//initialize master poi's icon
+				var redPin:MapIcon = new MapIcon();
+				redPin.setImage(new red(), 48, 48);
+				_masterPoi.icon = redPin;
+				_masterPoi.altIcon = redPin;
+
+				//add events
+				_masterPoi.addEventListener(MouseEvent.CLICK, onMasterPoiClickHandler);
+				myMap.addEventListener(TileMapEvent.ZOOM_END, zoomHandler);
+			}
+			
+						
+			public function addPoi(latLng:Array):void
+			{
+				for(var i:int = 0; i < latLng.length; i++)
+				{
+					//creating poi's
+					_poi = new Poi(latLng[i]);
+					_poi.rolloverAndInfoTitleText = "point #" + (++poiIndex);
+					
+					// myChildPoi is the shapecollection for the child poi's, add poi's to the shapeCollection
+					_childPoiColl.add(_poi);
+					
+					//add event listener for each poi
+					_childPoiColl.getShapeAtIndex(i).addEventListener(MouseEvent.CLICK, onChildPoiClickHandler);
+					_changeIcon(i);
+				}
+			}
+			public function addLatLng(latLngData:Array):void
+			{
+				var latLng:Array = [];
+				 
+				for (var i:int = 0; i < latLngData.length; i++)
+				{
+					// convert StoreLocationVO array into LatLng array;
+					latLng.push(new LatLng(latLngData[i].latitude, latLngData[i].longitude));					
+					
+				}
+				addPoi(latLng);
+			}
+			
+			public function setBusyCursor():void
+			{
+				cursorManager.setBusyCursor();
+			}
+			public function removeBusyCursor():void
+			{
+				cursorManager.removeBusyCursor();
+			}
+			
+			
+			
+			private function _changeIcon(i:int):void
+			{
+					//create new icons
+					var yellowPin:MapIcon = new MapIcon();
+					var redPin:MapIcon = new MapIcon();
+					var greenPin:MapIcon = new MapIcon();
+					yellowPin.setImage(new yellow(), 48, 48);
+					redPin.setImage(new red(), 48, 48);
+					greenPin.setImage(new green(), 48, 48);
+				
+ 					if(i%2 == 0)
+					{
+						_poi.icon = yellowPin;
+						_poi.altIcon = yellowPin;
+					}
+					else if(i%3 == 0)
+					{
+						_poi.icon = greenPin;
+						_poi.altIcon = greenPin;
+					}
+					else
+					{
+						_poi.icon = redPin;
+						_poi.altIcon = redPin;
+					} 
+
+					// set offset for custom icon
+					_poi.icon.anchorOffset = new Point(-24,-40);
+			}
+			
+			
+			protected function onMasterPoiClickHandler(event:MouseEvent):void
+			{
+				myMap.addShapeCollection(_childPoiColl);
+				myMap.removeShape(_masterPoi);
+				myMap.zoom = 6;
+				myMap.setCenter(_masterPoi.latLng);
+			}
+			
+			protected function zoomHandler(event:TileMapEvent):void
+			{
+				if(event.zoom > 3)
+				{
+					myMap.addShapeCollection(_childPoiColl);
+					myMap.removeShapeCollection(_masterPoiColl);
+				}
+				else
+				{
+					myMap.addShapeCollection(_masterPoiColl);
+					myMap.removeShapeCollection(_childPoiColl);
+					
+				}
+			}
+			
+			
+		private var _contentWindow:ContentWindow = new ContentWindow;
+		//private var poiInfoSp:PoiInfoSprite = new PoiInfoSprite();
+			private function onChildPoiClickHandler(event:MouseEvent):void
+			{
+				myMap.addChild(new ContentWindow);
+				//myMap.addChild(new PoiInfoSprite());
+				trace(event.localX, event.localY);
+				//myMap.zoom = 12;
+				//myMap.setCenter(event.currentTarget.latLng);
+			}
+			
+		]]>
+		
+	</fx:Script>
+	
+	<mq:TilemapComponent id="myMap" 
+						 key="Fmjtd%7Cluua20u7n0%2C7g%3Do5-967556"
+						 width="100%" height="100%"
+						 zoom="5"
+						 x="0" y="0"/>
+ 	
+	
+</s:Group>
