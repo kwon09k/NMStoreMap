@@ -6,7 +6,7 @@ package nmmap.events
 	{
 		public static const UPDATE_LATITUDE_AND_LONGITUDE:String = "updateLatitudeAndLongitude";
 		public static const GEOCODE_ADDRESS:String = "geocodeAdress";
-		public static const UPDATE_STORE_INFORMATION_MODEL:String = "geocodeAdress";
+		public static const STORE_INFORMATION_MODEL_UPDATED_STORE_INFORMATION:String = "storeInformationModelUpdatedStoreInformation";
 		
 		
 		private var _updatedValue:Array = [];

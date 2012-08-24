@@ -23,6 +23,8 @@ package nmmap.services
 			_configureRemote()
 		}
 
+		
+//		http://expressdev1.nmg/storeInformation
 		private function _configureRemote():void
 		{
 			var serviceURI:String = "http://expressdev1.nmg/storeInformation";

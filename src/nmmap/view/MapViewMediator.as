@@ -1,13 +1,27 @@
 package nmmap.view
 {
-	import com.mapquest.tilemap.pois.Poi;
-	import com.mapquest.tilemap.pois.PoiEvent;
+	import flash.events.MouseEvent;
 	
+	import nmmap.events.ContentWindowEvent;
 	import nmmap.events.MapEvent;
 	import nmmap.events.ModelUpdateEvent;
-	import nmmap.model.PoiModel;
+	import nmmap.events.RequestStoreInformationDataEvent;
+	import nmmap.model.StoreInformationModel;
 	
 	import org.robotlegs.mvcs.Mediator;
+
+
+	/**
+	 * Mediator for Mapview
+	 * 
+	 * Author: yKwon
+	 * Date:
+	 * User:
+	 * 
+	 * 
+	 */
+	
+	
 	
 	public class MapViewMediator extends Mediator
 	{
@@ -15,55 +29,100 @@ package nmmap.view
 		public var view:MapView;
 		
 		[Inject]
-		public var model:PoiModel;
+		public var model:StoreInformationModel;
 		
 		
+		// ------ constuctor -------
 		public function MapViewMediator()
 		{
 			super();
 		}
 		
+		
+		// ------- override method -------
 		override public function onRegister():void
 		{
-			addViewListener(MapEvent.POI_SELECTED, dispatch, MapEvent);
-			addContextListener(ModelUpdateEvent.UPDATE_LATITUDE_AND_LONGITUDE, _updatePoi)
-			//addContextListener(ModelUpdateEvent.UPDATE_STORE_INFORMATION_MODEL, _handleStoreInformation)
+			addViewListener(ContentWindowEvent.ADD_CONTENT_WINDOW, _addContentWindowHandler);
+			addViewListener(ContentWindowEvent.REFRESH_CONTENT_WINDOW, _refreshContentWindowHandler);
+			
+			addContextListener(ModelUpdateEvent.UPDATE_LATITUDE_AND_LONGITUDE, _updateCoordinates);
 			
 			addContextListener(MapEvent.SET_BUSY_CURSOR, _setBusyCursor);
 			addContextListener(MapEvent.REMOVE_BUSY_CURSOR, _removeBusyCursor);
-/*			addContextListener(PoiUpdateEvent.ADDRESS, addressChange)*/
 			
-			//eventMap.mapListener(view, MapEvent.POI_SELECT, dispatch);
+			
+			
+			addContextListener(MapEvent.SHOW_RED_POI, _showRedHandler);
+			addContextListener(MapEvent.SHOW_YELLOW_POI, _showYellowHandler);
+			addContextListener(MapEvent.SHOW_GREEN_POI, _showGreenHandler);
+			addContextListener(MapEvent.SHOW_ALL_POI, _showAllHandler);
+
+			
+			dispatch(new RequestStoreInformationDataEvent(RequestStoreInformationDataEvent.GET_STORE_LOCATIONS));
+
 			
 		}
 		
-		private function _updatePoi(event:ModelUpdateEvent):void
+		
+		// ------- Event Handler ------
+		// onEnventName 
+		// handleEventName
+		// eventNameHandler
+
+
+		
+		private function _updateCoordinates(event:ModelUpdateEvent):void
 		{
-			//this is old one
-			//view.addLatLng(event.value);
 			
-			view.addPoi(event.updatedValue);
+			var storeInformation:Array=[];
+			var latLng:Array=[];
+			storeInformation = model.storeInformation;
+			latLng = event.updatedValue;
 			
+			view.setCoordinates(latLng);
+			view.setLocationInformation(storeInformation);
+			view.mapLocationData();
 			
 		}
 		
 		private function _setBusyCursor(event:MapEvent):void
 		{
-			view.setBusyCursor()
+			view.setBusyCursor();
 		}
 		private function _removeBusyCursor(event:MapEvent):void
 		{
-			view.removeBusyCursor()
+			view.removeBusyCursor();
 		}
-		private function _handleStoreInformation(event:ModelUpdateEvent):void
+		
+		
+		
+		private function _showRedHandler(event:MapEvent):void
 		{
-			view.addPoi(event.updatedValue);
-			trace("Store Information Update is completed.\n\n" + "The result is:\n" + event.updatedValue);
+			view.showRedPoi();
 		}
-/*		private function addressChange(event:PoiUpdateEvent):void
+		private function _showYellowHandler(event:MapEvent):void
 		{
-			view.addressToLatLng(event.value);
-		}*/
+			view.showYellowPoi();
+		}
+		private function _showGreenHandler(event:MapEvent):void
+		{
+			view.showGreenPoi();
+		}
+		private function _showAllHandler(event:MapEvent):void
+		{
+			view.showAllPoi();
+		}
+		
+		
+		
+		private function _addContentWindowHandler(event:ContentWindowEvent):void
+		{
+			dispatch(new ContentWindowEvent(ContentWindowEvent.ADD_CONTENT_WINDOW, event.storeInfo, event.point));
+		}
+		private function _refreshContentWindowHandler(event:ContentWindowEvent):void
+		{
+			dispatch(new ContentWindowEvent(ContentWindowEvent.REFRESH_CONTENT_WINDOW, event.storeInfo, event.point));
+		}
 		
 	}
 }

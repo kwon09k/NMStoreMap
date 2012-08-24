@@ -20,6 +20,7 @@ package nmmap.controller
 			super.execute();
 			
 			service.getStoreLocations();
+			trace("ServiceCommand");
 		}
 	}
 }

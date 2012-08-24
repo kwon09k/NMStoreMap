@@ -1,8 +1,12 @@
 package nmmap.vo
 {
+	import com.mapquest.LatLng;
+
 	[RemoteClass(alias="com.neimanmarcus.storeinformation.domain.StoreVO")]
 	public class StoreVO implements IStoreInformation
 	{
+		private var _key:int;
+		
 		private var _storeNumber:int;
 		private var _businessUnitCode:String;
 		private var _subBusinessUnitCode:String;
@@ -16,12 +20,50 @@ package nmmap.vo
 		private var _country:String;
 		private var _postalCode:int;
 		
+		private var _latLng:LatLng;
+		private var _latitude:Number;
+		private var _longitude:Number;
 		
-		public function StoreVO() 
+		
+		public function get key():int
 		{
+			return _key;
+		}
+		public function set key(value:int):void
+		{
+			_key = value;
 		}
 		
-		
+		public function get latLng():LatLng
+		{
+			return _latLng;
+		}
+
+		public function set latLng(value:LatLng):void
+		{
+			_latLng = value;
+			_latitude = value.lat;
+			_longitude = value.lng;
+		}
+
+		public function get latitude():Number
+		{
+			return _latitude;
+		}
+		public function set latitude(value:Number):void
+		{
+			_latitude = value;
+		}
+
+		public function get longitude():Number
+		{
+			return _longitude;
+		}
+		public function set longitude(value:Number):void
+		{
+			_longitude = value;
+		}
+
 		public function get postalCode():int
 		{
 			return _postalCode;
@@ -142,5 +184,6 @@ package nmmap.vo
 			_storeNumber = value;
 		}
 
+		
 	}
 }

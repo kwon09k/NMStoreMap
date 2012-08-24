@@ -5,6 +5,12 @@ package nmmap.events
 	public class MapEvent extends Event
 	{
 		
+		public static const SHOW_RED_POI:String = "showRedPoi";
+		public static const SHOW_YELLOW_POI:String = "showYellowPoi";
+		public static const SHOW_GREEN_POI:String = "showGreenPoi";
+		public static const SHOW_ALL_POI:String = "showAllPoi";
+		
+		
 		public static const POI_SELECTED:String = "poiSelected";
 		
 		public static const PLOT_LATLNG:String = "plotLatLng";
@@ -14,6 +20,12 @@ package nmmap.events
 		
 		public static const SET_BUSY_CURSOR:String = "setBusyCursor";
 		public static const REMOVE_BUSY_CURSOR:String = "removeBusyCursor";
+		
+		public static const ADD_VIEW_TO_THE_APPLICATION:String = "removeBusyCursor";
+		
+		public static const TESTING:String = "testing";
+		
+		
 		
 		public function MapEvent(type:String, bubbles:Boolean=false, cancelable:Boolean=false)
 		{

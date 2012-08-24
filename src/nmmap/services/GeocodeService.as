@@ -7,12 +7,8 @@ package nmmap.services
 	import com.mapquest.tilemap.controls.shadymeadow.*;
 	import com.mapquest.tilemap.pois.*;
 	
-	import mx.controls.Alert;
-	import mx.core.mx_internal;
-	
 	import nmmap.events.GeocodeServiceResponseEvent;
 	import nmmap.events.MapEvent;
-	import nmmap.events.ModelUpdateEvent;
 	import nmmap.model.PoiModel;
 	
 	import org.robotlegs.mvcs.Actor;
@@ -27,8 +23,15 @@ package nmmap.services
 		public function GeocodeService()
 		{
 			super();
-			_geocoder = new Geocoder("Fmjtd%7Cluua20u7n0%2C7g%3Do5-967556");
+//			_geocoder = new Geocoder("Fmjtd%7Cluua20u7n0%2C7g%3Do5-967556");
+			_geocoder = new Geocoder("Jmjtd%7Clu6yn907nu%2C8w%3Do5-lw8x9");
 			_geocoder.options.maxResults=1;
+			_geocoder.addEventListener(GeocoderEvent.GEOCODE_ERROR_EVENT, _geocodeErrorHandler);
+		}
+		
+		private function _geocodeErrorHandler(event:GeocoderEvent):void
+		{
+			trace("geocode completed");
 		}
 		
 		public function doGeocode(address:Array):void

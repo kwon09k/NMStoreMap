@@ -4,11 +4,9 @@ package nmmap
 	
 	import nmmap.controller.GeocodeResponseCommand;
 	import nmmap.controller.GetStoreLocationsCommand;
-	import nmmap.controller.StoreInformationDataCommand;
-	import nmmap.controller.StoreInformationServiceCommand;
 	import nmmap.controller.StoreInformationServiceResponseCommand;
+	import nmmap.controller.UpdatedStoreInformationCommand;
 	import nmmap.events.GeocodeServiceResponseEvent;
-	import nmmap.events.MapEvent;
 	import nmmap.events.ModelUpdateEvent;
 	import nmmap.events.RequestStoreInformationDataEvent;
 	import nmmap.events.StoreInformationServiceResponseEvent;
@@ -17,14 +15,12 @@ package nmmap
 	import nmmap.services.IGeocodeService;
 	import nmmap.services.IStoreInformationService;
 	import nmmap.services.StoreInformationService;
-	import nmmap.view.ContentWindow;
-	import nmmap.view.ContentWindowMediator;
+	import nmmap.view.MainViewMediator;
 	import nmmap.view.MapButton;
 	import nmmap.view.MapButtonMediator;
 	import nmmap.view.MapView;
 	import nmmap.view.MapViewMediator;
 	
-	import org.robotlegs.base.ContextEvent;
 	import org.robotlegs.mvcs.Context;
 
 	
@@ -37,20 +33,20 @@ package nmmap
 		
 		override public function startup():void
 		{
-			mediatorMap.mapView(MapView, MapViewMediator);
-			mediatorMap.mapView(MapButton, MapButtonMediator);
-			mediatorMap.mapView(ContentWindow, ContentWindowMediator);
-			
 			injector.mapSingleton(PoiModel);
 			injector.mapSingleton(StoreInformationModel);
 			
+			mediatorMap.mapView(NMMap, MainViewMediator);
+			mediatorMap.mapView(MapView, MapViewMediator);
+			mediatorMap.mapView(MapButton, MapButtonMediator);
+			
+			
 			commandMap.mapEvent(GeocodeServiceResponseEvent.GEOCODE_SERVICE_SUCCESS, GeocodeResponseCommand);
 
-			//commandMap.mapEvent(MapEvent.GET_SERVICE, StoreInformationServiceCommand);
 			
 			commandMap.mapEvent(RequestStoreInformationDataEvent.GET_STORE_LOCATIONS, GetStoreLocationsCommand);
 			commandMap.mapEvent(StoreInformationServiceResponseEvent.STORE_INFORMATION_SERVICE_SUCCESS, StoreInformationServiceResponseCommand);
-			commandMap.mapEvent(ModelUpdateEvent.UPDATE_STORE_INFORMATION_MODEL, StoreInformationDataCommand)
+			commandMap.mapEvent(ModelUpdateEvent.STORE_INFORMATION_MODEL_UPDATED_STORE_INFORMATION, UpdatedStoreInformationCommand);
 			
 			
 			injector.mapSingletonOf(IGeocodeService, GeocodeService);

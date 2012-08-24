@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   title="my title"
+			   width="400"
+			   height="300"
+			   x="0"
+			   y="0">
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.TextArea;
+			
+			import nmmap.vo.StoreVO;
+			
+			public function setStoreName(storeName:String):void
+			{
+				this.title = storeName;
+								
+			}
+			
+			public function putContent(storeInfo:StoreVO):void
+			{
+				var textArea:TextArea = new TextArea();
+				var address:String = storeInfo.street1+" "+storeInfo.street2+"\n"+storeInfo.city+", "+storeInfo.state+" "+storeInfo.postalCode;
+				textArea.percentWidth = 100;
+				textArea.percentHeight = 100;
+				textArea.text = address;
+				textArea.editable = false;
+				
+				this.addElement(textArea);
+			}
+			public function setPoistion(xPosition:int=NaN, yPosition:int=NaN):void
+			{
+				this.x = xPosition;
+				this.y = yPosition;
+			}
+
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+</s:TitleWindow>

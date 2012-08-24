@@ -1,10 +1,6 @@
 package nmmap.model
 {
-	import com.mapquest.LatLng;
-	import com.mapquest.tilemap.pois.PoiEvent;
-	
 	import nmmap.events.ModelUpdateEvent;
-	import nmmap.vo.StoreLocationVO;
 	
 	import org.robotlegs.mvcs.Actor;
 	
@@ -12,7 +8,6 @@ package nmmap.model
 	{
 		private var _storeLatLng:Array = [];
 		
-		private var _storeAddress:Array = [];
 		
 		
 		public function PoiModel()
@@ -25,15 +20,12 @@ package nmmap.model
 		{
 			return _storeLatLng;
 		}
-		public function get storeAddress():Array
-		{
-			return _storeAddress;
-		}
 		
 		public function set storeLatLng(latLng:Array):void
 		{
-			//_storeLatLng is an Array of StoreLocationVOs
+			//latLng is an Array of LatLNG
 			_storeLatLng = latLng;
+			
 			
 			dispatch(new ModelUpdateEvent(ModelUpdateEvent.UPDATE_LATITUDE_AND_LONGITUDE, latLng));
 		}

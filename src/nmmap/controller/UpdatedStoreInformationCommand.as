@@ -1,4 +1,4 @@
-package nmmap.controller
+ package nmmap.controller
 {
 	import com.mapquest.services.geocode.GeocoderLocation;
 	
@@ -7,8 +7,8 @@ package nmmap.controller
 	import nmmap.services.IGeocodeService;
 	
 	import org.robotlegs.mvcs.Command;
-	
-	public class StoreInformationDataCommand extends Command
+		
+	public class UpdatedStoreInformationCommand extends Command
 	{
 		
 		[Inject]
@@ -23,7 +23,7 @@ package nmmap.controller
 		private var _locations:Array = [];
 		private var _geocodeAddress:Array = [];
 		
-		public function StoreInformationDataCommand()
+		public function UpdatedStoreInformationCommand()
 		{
 			super();
 			
@@ -50,8 +50,8 @@ package nmmap.controller
 				
 				_geocodeAddress[i] = loc;
 				
+			trace(loc.street);
 			}
-			trace(_geocodeAddress);
 			service.doGeocode(_geocodeAddress);
 		}
 	}

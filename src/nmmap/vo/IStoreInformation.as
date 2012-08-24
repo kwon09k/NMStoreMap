@@ -1,8 +1,10 @@
 package nmmap.vo
 {
+	import com.mapquest.LatLng;
+
 	public interface IStoreInformation
 	{
-		
+		function get key():int;
 		function get postalCode():int;
 		function get country():String;
 		function get state():String;
@@ -15,6 +17,8 @@ package nmmap.vo
 		function get subBusinessUnitCode():String;
 		function get businessUnitCode():String;
 		function get storeNumber():int;
-
+		function get latitude():Number;
+		function get longitude():Number;
+		function get latLng():LatLng;
 	}
 }

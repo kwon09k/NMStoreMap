@@ -15,13 +15,18 @@
 			import com.mapquest.*;
 			import com.mapquest.services.geocode.*;
 			import com.mapquest.tilemap.ShapeCollection;
+			import com.mapquest.tilemap.TileMap;
 			import com.mapquest.tilemap.TileMapEvent;
+			import com.mapquest.tilemap.ZoomSettings;
 			import com.mapquest.tilemap.controls.inputdevice.*;
 			import com.mapquest.tilemap.controls.shadymeadow.*;
 			import com.mapquest.tilemap.pois.*;
 			
-			import mx.core.InteractionMode;
 			import mx.events.FlexEvent;
+			
+			import nmmap.events.ContentWindowEvent;
+			import nmmap.events.RequestStoreInformationDataEvent;
+			import nmmap.vo.StoreVO;
 			
 			import spark.components.*;
 
@@ -33,17 +38,9 @@
 			[Embed ("nmmap/images/green-pin.png")]
 			private var green:Class;
 			
-			public var poiIndex:int = 0;			
 			
-/*  			[Bindable]
-			private var latLng:Array = []; */
- 			[Bindable]
-			private var _poi:Poi;
-			[Bindable]
 			private var _masterPoi:Poi = new Poi(new LatLng(33,-96.8), new StarMapIcon(35, 0x123456));
-			[Bindable]
 			private var _childPoiColl:ShapeCollection = new ShapeCollection;
-			[Bindable]
 			private var _masterPoiColl:ShapeCollection = new ShapeCollection;
 			
 			//create a ClusterDeclutter object
@@ -56,15 +53,14 @@
 			private function _creationCompleteHandler(event:FlexEvent):void
 			{
 				//add controls to the map
-				myMap.addControl(new SMLargeZoomControl());
-				myMap.addControl(new SMViewControl);
+//				myMap.addControl(new SMLargeZoomControl());
+//				myMap.addControl(new SMViewControl);
 				myMap.addControl(new MouseWheelZoomControl());
 				myMap.addControl(new KeyboardControl());
 				
-				myMap.tileMap.cursorManager.enabled = true;
-				
+				myMap.tileMap.showMobileCursor = true;
 				//setting center based on master poi				
-				myMap.setCenter(_masterPoi.latLng);
+				myMap.setCenter(new LatLng(35.283, -97.3058));
 				
 				
 				//add a leader line object so we can change the properties of the leader lines
@@ -76,7 +72,7 @@
 				//turn on declutter mode
 //				myMap.declutter = _deClutter;
 				
-				
+/* master poi				
 				//initialize master poi
 				_masterPoi = new Poi(new LatLng(33,-96.8));
 				_masterPoi.rolloverAndInfoTitleText = "master";
@@ -92,80 +88,271 @@
 
 				//add events
 				_masterPoi.addEventListener(MouseEvent.CLICK, onMasterPoiClickHandler);
-				myMap.addEventListener(TileMapEvent.ZOOM_END, zoomHandler);
+ 				myMap.addEventListener(TileMapEvent.ZOOM_END, zoomHandler);
+*/				
+
+				
+				
+				var zoomSetting:ZoomSettings = new ZoomSettings();
+				zoomSetting.smoothing = true;
+				zoomSetting.animate = true;
+				zoomSetting.fadeTime = 10;
+				zoomSetting.interval = 3;
+				zoomSetting.time = 10;
+				
+				
+				
+				myMap.tileMap.zoomSettings = zoomSetting;
+				myMap.zoomSettings = zoomSetting;
+				
+				
+				
+				Multitouch.inputMode = MultitouchInputMode.GESTURE;
+
+				
+				
+//				myMap.tileMap.usePinchZoom = false;
+				
+				
+				
+				
+//				myMap.addEventListener(TransformGestureEvent.GESTURE_ZOOM, onTransformGestureZoom);
+//				myMap.addEventListener(TransformGestureEvent.GESTURE_ZOOM, onZoom);
+					
+}			
+ 			private function onZoom(event:TransformGestureEvent):void
+			{
+				
+				_centerLatLng = myMap.center;
+				trace("outside else mapX and eventX " + myMap.tileMap.scaleX + " "+ event.scaleX + " mapY and eventY " + myMap.tileMap.scaleY + " "+ event.scaleY);
+				
+				if (event.phase == "begin") 
+				{
+					_touchPoint = this.globalToLocal(new Point(event.stageX, event.stageY));
+				}
+				if (event.phase == "update")
+				{					
+					if(myMap.tileMap.scaleX*event.scaleX < 0.7 || myMap.scaleX*event.scaleX > 1.08)
+					{
+					}
+					else
+					{
+						myMap.tileMap.scaleX *= event.scaleX;
+						myMap.tileMap.scaleY *= event.scaleY;
+						
+						trace(myMap.tileMap.zoom);
+						
+						trace("inside else mapX and eventX " + myMap.tileMap.scaleX + " "+ event.scaleX + " mapY and eventY " + myMap.tileMap.scaleY + " "+ event.scaleY);
+					}
+					if(myMap.tileMap.scaleX < 1)
+						_isPinching = true;
+					if(myMap.tileMap.scaleX > 1)
+						_isPinching = false;
+				}
+				if (event.phase == "end") 
+				{
+					if(_isPinching)
+						myMap.setCenter(_centerLatLng, myMap.zoomLevel - myMap.tileMap.scaleX);
+					else
+						myMap.setCenter(_centerLatLng, myMap.zoomLevel + myMap.tileMap.scaleX);
+//						myMap.setCenter(myMap.pixToLL(_touchPoint), myMap.zoomLevel + myMap.tileMap.scaleX);
+					
+					
+					myMap.tileMap.scaleX = 1;
+					myMap.tileMap.scaleY = 1;
+				}
+			}
+ 
+			
+			private var _isPinching:Boolean;
+			private var _centerLatLng:LatLng;
+			private var _touchPoint:Point;
+			
+
+			
+
+			private function transformShapeLayers():void 
+			{
+//				this._poiSprite.z = this._tileSprite.z;
+//				this._shadowLayer.z = this._tileSprite.z;
+//				this._shapeSprite.z = this._tileSprite.z;
 			}
 			
-						
-			public function addPoi(latLng:Array):void
+			
+			
+			
+			
+			
+			private var _coordinates:Array = [];
+			public function setCoordinates(value:Array):void
 			{
-				for(var i:int = 0; i < latLng.length; i++)
+				_coordinates = value;
+				
+			}
+			
+			private var _storeInformation:Array = [];
+			public function setLocationInformation(value:Array):void
+			{
+				_storeInformation = value;
+			}
+			
+			public function mapLocationData():void
+			{
+				var length:int = _storeInformation.length;
+				var poi:Poi;
+				var storeInfo:StoreVO;
+				
+				for (var i:int=0; i<length; i++)
 				{
-					//creating poi's
-					_poi = new Poi(latLng[i]);
-					_poi.rolloverAndInfoTitleText = "point #" + (++poiIndex);
+					storeInfo = _storeInformation[i];
+					poi = new Poi(_coordinates[i]);
 					
-					// myChildPoi is the shapecollection for the child poi's, add poi's to the shapeCollection
-					_childPoiColl.add(_poi);
+					poi.key = i + "";
+					poi.rolloverAndInfoTitleText = storeInfo.storeName;
+					//use this for filttering pois
+					poi.label = storeInfo.subBusinessUnitCode;
+					poi.labelVisible = false;
 					
-					//add event listener for each poi
-					_childPoiColl.getShapeAtIndex(i).addEventListener(MouseEvent.CLICK, onChildPoiClickHandler);
-					_changeIcon(i);
+ 					//add event listener for each poi
+//					_childPoiColl.getShapeAtIndex(i).addEventListener(MouseEvent.CLICK, onChildPoiClickHandler);
+					poi.addEventListener(MouseEvent.CLICK, onChildPoiClickHandler);
+					
+					// _childPoi is the shapecollection for the child poi's, add poi's to the shapeCollection
+					_childPoiColl.add(poi);
+					
+					poi.icon = generatePOIIcon(storeInfo);
+				// set offset for custom icon
+					poi.icon.anchorOffset = new Point(-24,-40);
+//					_changeIcon(poi, i); 
+					
+					
+					//add pois to the map
+					myMap.addShapeCollection(_childPoiColl);
+				}
+				
+			}
+			
+			protected function generatePOIIcon(store:StoreVO):MapIcon
+			{
+				// set Icon based on store.subBusinessUnitCode
+				// C, P, R
+				//create new icons
+				var yellowPin:MapIcon = new MapIcon();
+				var redPin:MapIcon = new MapIcon();
+				var greenPin:MapIcon = new MapIcon();
+				yellowPin.setImage(new yellow(), 48, 48);
+				redPin.setImage(new red(), 48, 48);
+				greenPin.setImage(new green(), 48, 48);
+				
+				if(store.subBusinessUnitCode == 'C')
+				{
+					return yellowPin;
+				}
+				else if(store.subBusinessUnitCode == 'R')
+				{
+					return greenPin;
+				}
+				else
+				{
+					return redPin;
+				} 
+				
+			}
+			public function filterPoi():void
+			{
+				var length:int = _childPoiColl.length;
+				var poi:Poi;
+				for(var i:int = 0; i < length; i++)
+				{
+ 					poi = _childPoiColl.getShapeAtIndex(i) as Poi; 
+
+					if(poi.label == 'C')
+					{
+						trace("CCCCCCCCCC");					
+					}
+					if(poi.label == 'R')
+					{
+						trace("RRRRRRRR");					
+					}
+					if(poi.label == 'P')
+					{
+						trace("PPP");					
+					}
 				}
 			}
-			public function addLatLng(latLngData:Array):void
+
+			public function showRedPoi():void
 			{
-				var latLng:Array = [];
-				 
-				for (var i:int = 0; i < latLngData.length; i++)
+				var length:int = _childPoiColl.length;
+				var poi:Poi;
+				
+				for(var i:int = 0; i < length; i++)
 				{
-					// convert StoreLocationVO array into LatLng array;
-					latLng.push(new LatLng(latLngData[i].latitude, latLngData[i].longitude));					
+					poi = _childPoiColl.getShapeAtIndex(i) as Poi; 
 					
+					if(poi.label != 'P')
+						poi.visible = false;
+					else
+						poi.visible = true;
 				}
-				addPoi(latLng);
 			}
+			public function showYellowPoi():void
+			{
+				var length:int = _childPoiColl.length;
+				var poi:Poi;
+				
+				for(var i:int = 0; i < length; i++)
+				{
+					poi = _childPoiColl.getShapeAtIndex(i) as Poi; 
+					
+					if(poi.label != 'C')
+						poi.visible = false;
+					else
+						poi.visible = true;
+				}
+			}
+			public function showGreenPoi():void
+			{
+				var length:int = _childPoiColl.length;
+				var poi:Poi;
+				
+				for(var i:int = 0; i < length; i++)
+				{
+					poi = _childPoiColl.getShapeAtIndex(i) as Poi; 
+					
+					if(poi.label != 'R')
+						poi.visible = false;
+					else
+						poi.visible = true;
+				}
+			}
+			public function showAllPoi():void
+			{
+				var length:int = _childPoiColl.length;
+				var poi:Poi;
+				
+				for(var i:int = 0; i < length; i++)
+				{
+					poi = _childPoiColl.getShapeAtIndex(i) as Poi; 
+					
+					poi.visible = true;
+				}
+			}			
+			
+			
+			
+			
 			
 			public function setBusyCursor():void
 			{
 				cursorManager.setBusyCursor();
 			}
+			
 			public function removeBusyCursor():void
 			{
 				cursorManager.removeBusyCursor();
 			}
-			
-			
-			
-			private function _changeIcon(i:int):void
-			{
-					//create new icons
-					var yellowPin:MapIcon = new MapIcon();
-					var redPin:MapIcon = new MapIcon();
-					var greenPin:MapIcon = new MapIcon();
-					yellowPin.setImage(new yellow(), 48, 48);
-					redPin.setImage(new red(), 48, 48);
-					greenPin.setImage(new green(), 48, 48);
-				
- 					if(i%2 == 0)
-					{
-						_poi.icon = yellowPin;
-						_poi.altIcon = yellowPin;
-					}
-					else if(i%3 == 0)
-					{
-						_poi.icon = greenPin;
-						_poi.altIcon = greenPin;
-					}
-					else
-					{
-						_poi.icon = redPin;
-						_poi.altIcon = redPin;
-					} 
 
-					// set offset for custom icon
-					_poi.icon.anchorOffset = new Point(-24,-40);
-			}
-			
 			
 			protected function onMasterPoiClickHandler(event:MouseEvent):void
 			{
@@ -191,15 +378,38 @@
 			}
 			
 			
-		private var _contentWindow:ContentWindow = new ContentWindow;
-		//private var poiInfoSp:PoiInfoSprite = new PoiInfoSprite();
+			private var poiClicked:Array = [];
+			
 			private function onChildPoiClickHandler(event:MouseEvent):void
 			{
-				myMap.addChild(new ContentWindow);
-				//myMap.addChild(new PoiInfoSprite());
-				trace(event.localX, event.localY);
-				//myMap.zoom = 12;
-				//myMap.setCenter(event.currentTarget.latLng);
+				var index:int = event.currentTarget.key;
+				var storeInfo:StoreVO = _storeInformation[index];
+				var point:Point = new Point(this.mouseX, this.mouseY);
+				
+				storeInfo.key = index;
+				
+				if(poiClicked[index])
+					dispatchEvent(new ContentWindowEvent(ContentWindowEvent.REFRESH_CONTENT_WINDOW, storeInfo, point));
+				else
+					dispatchEvent(new ContentWindowEvent(ContentWindowEvent.ADD_CONTENT_WINDOW, storeInfo, point));
+				
+				poiClicked[index] = true;
+			}
+			
+			
+			
+			protected function myMap_clickHandler(event:MouseEvent):void
+			{
+//				trace("myMapLL is " + myMap.tileMap.pixToLL(new Point(this.mouseX, this.mouseY)));
+//				trace("Handler X is " + this.mouseX + " " + this.mouseY);
+				
+			}
+			
+			protected function myMap_gestureTwoFingerTapHandler(event:GestureEvent):void
+			{
+				// TODO Auto-generated method stub
+				trace("myMap_gestureTwoFingerTapHandler");
+				myMap.zoomIn();
 			}
 			
 		]]>
@@ -210,6 +420,9 @@
 						 key="Fmjtd%7Cluua20u7n0%2C7g%3Do5-967556"
 						 width="100%" height="100%"
 						 zoom="5"
+						 gestureTwoFingerTap="myMap_gestureTwoFingerTapHandler(event)"
+						 
+						 click="myMap_clickHandler(event)"
 						 x="0" y="0"/>
  	
 	

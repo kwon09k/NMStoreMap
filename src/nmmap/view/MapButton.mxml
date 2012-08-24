@@ -1,31 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<s:HGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
-		 xmlns:s="library://ns.adobe.com/flex/spark" 
-		 xmlns:mx="library://ns.adobe.com/flex/mx"
-		 width="100%" horizontalAlign="center">
+<s:HGroup xmlns:fx="http://ns.adobe.com/mxml/2009"
+		  xmlns:s="library://ns.adobe.com/flex/spark"
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  width="100%" horizontalAlign="center" paddingTop="25">
 	
 	<fx:Script>
 
 		<![CDATA[
 			import nmmap.events.MapEvent;
 			
-			//script here			
-			protected function latLngButton_clickHandler(event:MouseEvent):void
+
+			
+			protected function red_clickHandler(event:MouseEvent):void
 			{
-				dispatchEvent(new MapEvent(MapEvent.PLOT_LATLNG));		
+				dispatchEvent(new MapEvent(MapEvent.SHOW_RED_POI));				
+			}
+			
+			protected function yellow_clickHandler(event:MouseEvent):void
+			{
+				dispatchEvent(new MapEvent(MapEvent.SHOW_YELLOW_POI));				
 				
 			}
 			
-			protected function addressButton_clickHandler(event:MouseEvent):void
+			protected function green_clickHandler(event:MouseEvent):void
 			{
-				dispatchEvent(new MapEvent(MapEvent.PLOT_GEOCODE));
-				addressButton.enabled = false;
+				dispatchEvent(new MapEvent(MapEvent.SHOW_GREEN_POI));				
+				
 			}
 			
-			protected function serviceButton_clickHandler(event:MouseEvent):void
+			protected function showAll_clickHandler(event:MouseEvent):void
 			{
-				dispatchEvent(new MapEvent(MapEvent.GET_SERVICE));
-				//serviceButton.enabled = false;				
+				dispatchEvent(new MapEvent(MapEvent.SHOW_ALL_POI));
 			}
 			
 		]]>
@@ -33,17 +38,14 @@
 	</fx:Script>
 	
 	
-	<s:Button id="latLngButton" 
-			  label="LatLng"
-			  click="latLngButton_clickHandler(event)"/>
-	<s:Button id="addressButton" 
-			  label="Address"
-			  click="addressButton_clickHandler(event)"/>
-	<s:Button id="serviceButton" 
-			  label="Get Service"
-			  click="serviceButton_clickHandler(event)"/>
-	<s:Button label="Button"/>
-	<s:Button label="Button"/>
+	<s:Button id="red" width="100" height="50" label="Red" chromeColor="#FF0000"
+			  click="red_clickHandler(event)" fontSize="18" fontWeight="bold"/>
+	<s:Button id="yellow" width="100" height="50" label="Yellow" chromeColor="#FFF600"
+			  click="yellow_clickHandler(event)" color="#000000" fontSize="18" fontWeight="bold"/>
+	<s:Button id="green" width="100" height="50" label="Green" chromeColor="#1EFF00"
+			  click="green_clickHandler(event)" color="#000000" fontSize="18" fontWeight="bold"/>
+	<s:Button id="showAll" width="100" height="50" label="Show All" chromeColor="#000000"
+			  click="showAll_clickHandler(event)" color="#FFFFFF" fontSize="18" fontWeight="bold"/>
 
 	
 </s:HGroup>

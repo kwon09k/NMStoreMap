@@ -2,7 +2,6 @@ package nmmap.model
 {
 	
 	import nmmap.events.ModelUpdateEvent;
-	import nmmap.vo.StoreVO;
 	
 	import org.robotlegs.mvcs.Actor;
 	
@@ -10,6 +9,7 @@ package nmmap.model
 	{
 		
 		private var _storeInformation:Array = [];
+		private var _storeName:String = "";
 		
 		public function StoreInformationModel()
 		{
@@ -21,31 +21,27 @@ package nmmap.model
 			return _storeInformation;
 		}
 		
-		public function set storeInformation(storeInfo:Array):void
+		public function set storeInformation(value:Array):void
 		{
-			var storeVO:StoreVO;
-			for(var i:int = 0; i < storeInfo.length; i++)
-			{
-				storeVO = new StoreVO();
-				storeVO.abbrevCombine = storeInfo[i].abbrevCombine;
-				storeVO.businessUnitCode = storeInfo[i].businessUnitCode;
-				storeVO.city = storeInfo[i].city;
-				storeVO.country = storeInfo[i].country;
-				storeVO.postalCode = storeInfo[i].postalCode;
-				storeVO.state = storeInfo[i].state;
-				storeVO.storeName = storeInfo[i].storeName;
-				storeVO.storeNumber = storeInfo[i].storeNumber;
-				storeVO.street1 = storeInfo[i].street1;
-				storeVO.street2 = storeInfo[i].street2;
-				storeVO.subBusinessUnitCode = storeInfo[i].subBusinessUnitCode;
-				storeVO.subBusinessUnitDesc = storeInfo[i].subBusinessUnitDesc;
-				
-				_storeInformation.push(storeVO);
-				
-			trace("model updating......." + i);
-			}
-			dispatch(new ModelUpdateEvent(ModelUpdateEvent.UPDATE_STORE_INFORMATION_MODEL, storeInfo));
+			//storeInformation is an array of StoreVO
+			_storeInformation = value;
+			dispatch(new ModelUpdateEvent(ModelUpdateEvent.STORE_INFORMATION_MODEL_UPDATED_STORE_INFORMATION, _storeInformation));
 		}
+		
+
+		public function set storeLatLng(latLng:Array):void
+		{
+			var length:int = latLng.length;
+			
+			for( var i:int = 0; i<length; i++)
+			{	
+				storeInformation[i].latLng = latLng[i];
+			}
+			
+			dispatch(new ModelUpdateEvent(ModelUpdateEvent.UPDATE_LATITUDE_AND_LONGITUDE, latLng));
+		}
+		
+		
 		
 	}
 }
