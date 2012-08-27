@@ -1,5 +1,16 @@
  package nmmap.controller
 {
+	 
+	 /**
+	  * Updated Store Information Command
+	  * 
+	  * Author: yKwon
+	  * Date: August 27, 2012
+	  * 
+	  * 
+	  * 
+	  */
+	 
 	import com.mapquest.services.geocode.GeocoderLocation;
 	
 	import nmmap.events.ModelUpdateEvent;

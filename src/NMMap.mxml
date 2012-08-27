@@ -12,6 +12,17 @@
 	</fx:Declarations>
 	<fx:Script>
 		<![CDATA[
+			
+			/**
+			 * Main Application View
+			 * 
+			 * Author: yKwon
+			 * Date: August 27, 2012
+			 * 
+			 * 
+			 * 
+			 */
+			
 			import mx.core.IFlexDisplayObject;
 			import mx.events.CloseEvent;
 			import mx.managers.PopUpManager;
@@ -38,22 +49,18 @@
 				var index:int = storeInfo.key;
 				var popUp:DraggableTitleWindow = new DraggableTitleWindow;
 				popUp = PopUpManager.createPopUp(this, DraggableTitleWindow) as DraggableTitleWindow;
-//				var pop:DraggableTitleWindow = PopUpManager.createPopUp(this, DraggableTitleWindow) as DraggableTitleWindow;
 				
-//				pop.setStoreName(storeInfo.storeName);
-//				pop.putContent(storeInfo);
 				popUp.setStoreName(storeInfo.storeName);
 				popUp.putContent(storeInfo);
 				
 				popUp.x = xPosition+30;
 				popUp.y = yPosition-100;
-//				popUp.setPosition(xPosition, yPosition);
+
 				PopUpManager.addPopUp(popUp, this);
 //				PopUpManager.centerPopUp(popUp);
 
 				
 				popUp.addEventListener(CloseEvent.CLOSE, pop_closeHandler);
-//				popUp.addEventListener(CloseEvent.CLOSE, pop_closeHandler);
 				
 				_pop[index] = popUp;
 				index++;
@@ -76,7 +83,6 @@
 			
 			protected function myMapView_clickHandler(event:MouseEvent):void
 			{
-				// TODO Auto-generated method stub
 				trace("myMapView Clicked"+event.localX+" "+event.localY+ "mouse "+this.mouseX+" "+this.mouseY);
 				
 			}

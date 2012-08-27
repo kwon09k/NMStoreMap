@@ -1,5 +1,16 @@
 package nmmap.controller
 {
+	
+	/**
+	 * Store Locations Response Command
+	 * 
+	 * Author: yKwon
+	 * Date: August 27, 2012
+	 * 
+	 * 
+	 * 
+	 */
+	
 	import com.mapquest.services.geocode.GeocoderLocation;
 	
 	import nmmap.events.StoreInformationServiceResponseEvent;
@@ -7,7 +18,7 @@ package nmmap.controller
 	
 	import org.robotlegs.mvcs.Command;
 	
-	public class StoreInformationServiceResponseCommand extends Command
+	public class StoreLocationsResponseCommand extends Command
 	{
 		[Inject]
 		public var model:StoreInformationModel;
@@ -18,7 +29,7 @@ package nmmap.controller
 		private var _locations:Array = [];
 		private var _geocodeAddress:Array = [];
 		
-		public function StoreInformationServiceResponseCommand()
+		public function StoreLocationsResponseCommand()
 		{
 			super();
 		}

@@ -1,5 +1,16 @@
 package nmmap.controller
 {
+	
+	/**
+	 * Get Store Locations Command
+	 * 
+	 * Author: yKwon
+	 * Date: August 27, 2012
+	 * 
+	 * 
+	 * 
+	 */
+	
 	import nmmap.services.IStoreInformationService;
 	
 	import org.robotlegs.mvcs.Command;

@@ -4,7 +4,7 @@ package nmmap
 	
 	import nmmap.controller.GeocodeResponseCommand;
 	import nmmap.controller.GetStoreLocationsCommand;
-	import nmmap.controller.StoreInformationServiceResponseCommand;
+	import nmmap.controller.StoreLocationsResponseCommand;
 	import nmmap.controller.UpdatedStoreInformationCommand;
 	import nmmap.events.GeocodeServiceResponseEvent;
 	import nmmap.events.ModelUpdateEvent;
@@ -45,7 +45,7 @@ package nmmap
 
 			
 			commandMap.mapEvent(RequestStoreInformationDataEvent.GET_STORE_LOCATIONS, GetStoreLocationsCommand);
-			commandMap.mapEvent(StoreInformationServiceResponseEvent.STORE_INFORMATION_SERVICE_SUCCESS, StoreInformationServiceResponseCommand);
+			commandMap.mapEvent(StoreInformationServiceResponseEvent.STORE_INFORMATION_SERVICE_SUCCESS, StoreLocationsResponseCommand);
 			commandMap.mapEvent(ModelUpdateEvent.STORE_INFORMATION_MODEL_UPDATED_STORE_INFORMATION, UpdatedStoreInformationCommand);
 			
 			

@@ -1,5 +1,16 @@
 package nmmap.controller
 {
+	
+	/**
+	 * Geocode Response Command
+	 * 
+	 * Author: yKwon
+	 * Date: August 27, 2012
+	 * 
+	 * 
+	 * 
+	 */
+	
 	import nmmap.events.GeocodeServiceResponseEvent;
 	import nmmap.model.PoiModel;
 	import nmmap.model.StoreInformationModel;
